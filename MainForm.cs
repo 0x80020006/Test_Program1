@@ -26,14 +26,15 @@ namespace Test_Program1
             dtWeaponSet = new DataSet();
 
             //Read_CSV_to_DATATABLE_Test1();
-            Read_CSV_to_DATATABLE_Test2();
+            //Read_CSV_to_DATATABLE_Test2();
+            //Read_CSV_to_DATATABLE_Test3();
             //Read_CSV_to_LIST_Test1();
             //Read_CSV_to_LIST_Test2();
 
         }
 
 
-
+        //[失敗]あまり上手くいかない
         void Read_CSV_to_DATATABLE_Test1()
         {
             StreamReader file;
@@ -55,6 +56,7 @@ namespace Test_Program1
             }
         }
 
+        //[失敗]あまり上手くいかない
         void Read_CSV_to_DATATABLE_Test2()
         {
             using (TextFieldParser csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV))
@@ -76,6 +78,35 @@ namespace Test_Program1
             }
         }
 
+        //[失敗]あまり上手くいかない
+        //参考URL(https://vviilloovv.hatenablog.com/entry/2019/01/28/173420)
+        void Read_CSV_to_DATATABLE_Test3()
+        {
+            //var path = FOLDER_PATH;
+            //var csvs = Directory.GetFiles(path);
+            // 読み込んだファイル数分ループ
+            //foreach (var csv in csvs)
+            //{
+                // CSV読み込み
+            var csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV)
+            {
+              TextFieldType = FieldType.Delimited,
+              Delimiters = new string[] { "," }
+            };
+            //ヘッダー読み込みと記述があるが最初の1行しか読まない挙動コード
+            var heads = csv.ReadFields();
+            //Console.WriteLine($"{heads[18]}");
+
+        }
+
+        //参考URL(https://resanaplaza.com/2020/09/01/%E3%80%90c%E3%80%91csv%E3%81%AE%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%81%A8%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%81%BF%E3%82%92%E9%83%A8%E5%93%81%E5%8C%96%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F%EF%BC%81/#CSVDataTable)
+        void Read_CSV_to_DATATABLE_Test4()
+        {
+
+        }
+
+
+        //[失敗]あまり上手くいかない
         void Read_CSV_to_LIST_Test1()
         {
             StreamReader file;
@@ -86,6 +117,7 @@ namespace Test_Program1
             lWeapon.AddRange(str);
         }
 
+        //[失敗]あまり上手くいかない
         void Read_CSV_to_LIST_Test2()
         {
             lWeapon = new List<string>();
@@ -94,7 +126,7 @@ namespace Test_Program1
             {
                 //csvでコメントアウトできるっぽい
                 csvReader.CommentTokens = new string[] { "#" };
-                //csvでセルを区切る(.Split(',')と同じ効果)
+                //csvでセルを区切る(.Split(',')と同じ効果だがReadLineには無効っぽい？)
                 csvReader.SetDelimiters(new string[] { "," });
                 csvReader.HasFieldsEnclosedInQuotes = true;
                 csvReader.ReadLine();
