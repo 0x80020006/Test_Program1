@@ -28,6 +28,7 @@ namespace Test_Program1
             //Read_CSV_to_DATATABLE_Test1();
             //Read_CSV_to_DATATABLE_Test2();
             //Read_CSV_to_DATATABLE_Test3();
+            Read_CSV_to_DATATABLE_Test4();
             //Read_CSV_to_LIST_Test1();
             //Read_CSV_to_LIST_Test2();
 
@@ -74,7 +75,8 @@ namespace Test_Program1
                 {
                     dtWeapon.Columns.Add(new DataColumn(Convert.ToString(str[i])));
                 }
-                dtWeapon.Rows.Add(csv.ReadLine());
+                Console.WriteLine($"{str[14]}");
+                //dtWeapon.Rows.Add(csv.ReadLine());
             }
         }
 
@@ -99,10 +101,17 @@ namespace Test_Program1
 
         }
 
-        //参考URL(https://resanaplaza.com/2020/09/01/%E3%80%90c%E3%80%91csv%E3%81%AE%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%81%A8%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%81%BF%E3%82%92%E9%83%A8%E5%93%81%E5%8C%96%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F%EF%BC%81/#CSVDataTable)
         void Read_CSV_to_DATATABLE_Test4()
         {
-
+            TextFieldParser csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV);
+            csv.CommentTokens = new string[] { "#" };
+            csv.Delimiters = new string[] { "," };
+            //↓ReadLineはコメント行を関係なく開始1行目を読み込む
+            //string l = csv.ReadLine();
+            //↓ReadFieldsはコメント行を飛ばした1行目を読み込む
+            string[] l = csv.ReadFields();
+            Console.WriteLine($"{l[1]}");
+            //このあとwhileを使ってEndOfDataで最後の行まで読み込む処理を書く
         }
 
 
