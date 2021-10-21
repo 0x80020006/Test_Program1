@@ -101,6 +101,7 @@ namespace Test_Program1
 
         }
 
+        //なんとかcsvをデータテーブルに格納できた
         void Read_CSV_to_DATATABLE_Test4()
         {
             TextFieldParser csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV);
@@ -109,9 +110,23 @@ namespace Test_Program1
             //↓ReadLineはコメント行を関係なく開始1行目を読み込む
             //string l = csv.ReadLine();
             //↓ReadFieldsはコメント行を飛ばした1行目を読み込む
-            string[] l = csv.ReadFields();
-            Console.WriteLine($"{l[1]}");
+            string[] header = csv.ReadFields();
+            Console.WriteLine($"{header[1]}");
+            for(int i = 0; i < header.Length; i++)
+            {
+                dtWeapon.Columns.Add(header[i]);
+            }
             //このあとwhileを使ってEndOfDataで最後の行まで読み込む処理を書く
+            while(!csv.EndOfData)
+            {
+                string[] l = csv.ReadFields();
+                dtWeapon.Rows.Add(l) ;
+            }
+
+            foreach (DataRow dataRow in dtWeapon.Rows)
+            {
+                Console.WriteLine(string.Join(",", Array.ConvertAll(dataRow.ItemArray, x => x.ToString())));
+            }
         }
 
 
