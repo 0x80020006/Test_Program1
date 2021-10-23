@@ -28,7 +28,8 @@ namespace Test_Program1
             //Read_CSV_to_DATATABLE_Test1();
             //Read_CSV_to_DATATABLE_Test2();
             //Read_CSV_to_DATATABLE_Test3();
-            Read_CSV_to_DATATABLE_Test4();
+            //Read_CSV_to_DATATABLE_Test4();
+            Read_CSV_to_DATATABLE_Test4_Plus();
             //Read_CSV_to_LIST_Test1();
             //Read_CSV_to_LIST_Test2();
 
@@ -109,23 +110,81 @@ namespace Test_Program1
             csv.Delimiters = new string[] { "," };
             //↓ReadLineはコメント行を関係なく開始1行目を読み込む
             //string l = csv.ReadLine();
+
+            //DataTableにヘッダーを作成
             //↓ReadFieldsはコメント行を飛ばした1行目を読み込む
             string[] header = csv.ReadFields();
             Console.WriteLine($"{header[1]}");
             for(int i = 0; i < header.Length; i++)
             {
+                //header.Lengthの分だけカラムを作成
                 dtWeapon.Columns.Add(header[i]);
             }
+
+
             //このあとwhileを使ってEndOfDataで最後の行まで読み込む処理を書く
             while(!csv.EndOfData)
             {
+                //csvの内容を一行ずつDataTableに格納
                 string[] l = csv.ReadFields();
                 dtWeapon.Rows.Add(l) ;
             }
 
+
             foreach (DataRow dataRow in dtWeapon.Rows)
             {
                 Console.WriteLine(string.Join(",", Array.ConvertAll(dataRow.ItemArray, x => x.ToString())));
+            }
+        }
+
+        void Read_CSV_to_DATATABLE_Test4_Plus()
+        {
+            IEnumerable<string> CSV_FILES = Directory.EnumerateFiles(FOLDER_PATH).Where(str => str.EndsWith(".csv"));
+            List<string> CSV_LIST = new List<string>();
+            CSV_LIST = CSV_FILES.ToList();
+            Console.WriteLine($"{CSV_LIST[0]}");
+            for (int i = 0; i < CSV_LIST.Count; i++)
+            {
+                TextFieldParser csv = new TextFieldParser(CSV_LIST[i]);
+                Console.WriteLine($"{CSV_LIST[i]}");
+                csv.CommentTokens = new string[] { "#" };
+                csv.Delimiters = new string[] { "," };
+
+                string[] header = csv.ReadFields();
+                Console.WriteLine($"{header[1]}");
+                string CSV_FILE = CSV_LIST[i].Substring(FOLDER_PATH.Length);
+
+                for (int ii = 0; ii < header.Length; ii++)
+                {
+                    switch (CSV_FILE)
+                    {
+                        case "weapon.csv":
+                            dtWeapon.Columns.Add(header[i]);
+                            break;
+
+                        default:
+                            Console.WriteLine($"ヘッダー追加処理のcaseに下記ファイルを追加していない");
+                            Console.WriteLine($"{CSV_LIST[i]}");
+                            break;
+                    }
+
+                }
+
+                while (!csv.EndOfData)
+                {
+                    string[] l = csv.ReadFields();
+                    switch (CSV_FILE)
+                    {
+                        case "weapon.csv":
+                            dtWeapon.Rows.Add(l);
+                            break;
+
+                        default:
+                            Console.WriteLine($"データテーブル追加処理のcaseに下記ファイルを追加していない");
+                            Console.WriteLine($"{CSV_LIST[i]}");
+                            break;
+                    }
+                }
             }
         }
 
