@@ -13,7 +13,7 @@ namespace Test_Program1
 {
     class MainForm : Form
     {
-        static readonly string FOLDER_PATH = @"C:\Users\Dainsleif_fractal\source\repos\Test_Program1\";
+        static readonly string CSV_FOLDER_PATH = @"C:\Users\Dainsleif_fractal\source\repos\Test_Program1\";
         static readonly string WEAPON_CSV = "weapon.csv";
         List<string> lWeapon;
         DataTable dtWeapon;
@@ -40,7 +40,7 @@ namespace Test_Program1
         void Read_CSV_to_DATATABLE_Test1()
         {
             StreamReader file;
-            file = new StreamReader(FOLDER_PATH + WEAPON_CSV);
+            file = new StreamReader(CSV_FOLDER_PATH + WEAPON_CSV);
             string l = file.ReadLine();
             string[] str = l.Split(',');
             int c = str.Length;
@@ -61,7 +61,7 @@ namespace Test_Program1
         //[失敗]あまり上手くいかない
         void Read_CSV_to_DATATABLE_Test2()
         {
-            using (TextFieldParser csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV))
+            using (TextFieldParser csv = new TextFieldParser(CSV_FOLDER_PATH + WEAPON_CSV))
             {
                 csv.SetDelimiters(new string[] { "," });
                 csv.CommentTokens = new string[] { "#" };
@@ -91,7 +91,7 @@ namespace Test_Program1
             //foreach (var csv in csvs)
             //{
                 // CSV読み込み
-            var csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV)
+            var csv = new TextFieldParser(CSV_FOLDER_PATH + WEAPON_CSV)
             {
               TextFieldType = FieldType.Delimited,
               Delimiters = new string[] { "," }
@@ -105,7 +105,7 @@ namespace Test_Program1
         //なんとかcsvをデータテーブルに格納できた
         void Read_CSV_to_DATATABLE_Test4()
         {
-            TextFieldParser csv = new TextFieldParser(FOLDER_PATH + WEAPON_CSV);
+            TextFieldParser csv = new TextFieldParser(CSV_FOLDER_PATH + WEAPON_CSV);
             csv.CommentTokens = new string[] { "#" };
             csv.Delimiters = new string[] { "," };
             //↓ReadLineはコメント行を関係なく開始1行目を読み込む
@@ -139,8 +139,10 @@ namespace Test_Program1
 
         void Read_CSV_to_DATATABLE_Test4_Plus()
         {
-            IEnumerable<string> CSV_FILES = Directory.EnumerateFiles(FOLDER_PATH).Where(str => str.EndsWith(".csv"));
+            //フォルダ内のcsvファイル(マスタ)を読みだす
+            IEnumerable<string> CSV_FILES = Directory.EnumerateFiles(CSV_FOLDER_PATH).Where(str => str.EndsWith(".csv"));
             List<string> CSV_LIST = new List<string>();
+            //フォルダ内のcsvファイルをリストに格納
             CSV_LIST = CSV_FILES.ToList();
             Console.WriteLine($"{CSV_LIST[0]}");
             for (int i = 0; i < CSV_LIST.Count; i++)
@@ -152,14 +154,16 @@ namespace Test_Program1
 
                 string[] header = csv.ReadFields();
                 Console.WriteLine($"{header[1]}");
-                string CSV_FILE = CSV_LIST[i].Substring(FOLDER_PATH.Length);
+                //文字を切り出す
+                //参考URL(https://www.fenet.jp/dotnet/column/language/4521/)
+                string CSV_FILE = CSV_LIST[i].Substring(CSV_FOLDER_PATH.Length);
 
-                for (int ii = 0; ii < header.Length; ii++)
+                for (int j = 0; j < header.Length; j++)
                 {
                     switch (CSV_FILE)
                     {
                         case "weapon.csv":
-                            dtWeapon.Columns.Add(header[i]);
+                            dtWeapon.Columns.Add(header[j]);
                             break;
 
                         default:
@@ -172,11 +176,11 @@ namespace Test_Program1
 
                 while (!csv.EndOfData)
                 {
-                    string[] l = csv.ReadFields();
+                    string[] rf = csv.ReadFields();
                     switch (CSV_FILE)
                     {
                         case "weapon.csv":
-                            dtWeapon.Rows.Add(l);
+                            dtWeapon.Rows.Add(rf);
                             break;
 
                         default:
@@ -193,7 +197,7 @@ namespace Test_Program1
         void Read_CSV_to_LIST_Test1()
         {
             StreamReader file;
-            file = new StreamReader(FOLDER_PATH + WEAPON_CSV);
+            file = new StreamReader(CSV_FOLDER_PATH + WEAPON_CSV);
             lWeapon = new List<string>();
             string l = file.ReadLine();
             string[] str = l.Split(',');
@@ -205,7 +209,7 @@ namespace Test_Program1
         {
             lWeapon = new List<string>();
             //csvを簡単に読み込める？
-            using (TextFieldParser csvReader = new TextFieldParser(FOLDER_PATH + WEAPON_CSV))
+            using (TextFieldParser csvReader = new TextFieldParser(CSV_FOLDER_PATH + WEAPON_CSV))
             {
                 //csvでコメントアウトできるっぽい
                 csvReader.CommentTokens = new string[] { "#" };
