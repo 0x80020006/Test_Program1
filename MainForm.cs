@@ -13,15 +13,17 @@ namespace Test_Program1
 {
     class MainForm : Form
     {
+        static readonly string PLAYERDATA_FOLDER_PATH = @"C:\Users\Dainsleif_fractal\source\repos\Test_Program1\";
+        static readonly string PLAYERDATA_FILE = "player.txt";
         static readonly string CSV_FOLDER_PATH = @"C:\Users\Dainsleif_fractal\source\repos\Test_Program1\";
         static readonly string WEAPON_CSV = "weapon.csv";
         List<string> lWeapon;
         DataTable dtWeapon;
         DataSet dtWeaponSet;
+        List<long> PlayerWeaponList;
 
         public MainForm()
         {
-
             dtWeapon = new DataTable();
             dtWeaponSet = new DataSet();
 
@@ -32,7 +34,8 @@ namespace Test_Program1
             Read_CSV_to_DATATABLE_Test4_Plus();
             //Read_CSV_to_LIST_Test1();
             //Read_CSV_to_LIST_Test2();
-
+            Load_Data_Test1();
+            Save_Data_Test1();            
         }
 
 
@@ -49,7 +52,7 @@ namespace Test_Program1
             {
                 dtWeapon.Columns.Add(new DataColumn(str[i]));
             }
-            
+
             while (file.EndOfStream == false)
             {
 
@@ -70,7 +73,7 @@ namespace Test_Program1
                 //カラム数の割り出し
                 int c = csv.ReadLine().Length;
                 string l = csv.ReadLine();
-                string [] str = l.Split(',');
+                string[] str = l.Split(',');
                 Console.WriteLine($"{c}");
                 for (int i = 0; i < c; i++)
                 {
@@ -90,11 +93,11 @@ namespace Test_Program1
             // 読み込んだファイル数分ループ
             //foreach (var csv in csvs)
             //{
-                // CSV読み込み
+            // CSV読み込み
             var csv = new TextFieldParser(CSV_FOLDER_PATH + WEAPON_CSV)
             {
-              TextFieldType = FieldType.Delimited,
-              Delimiters = new string[] { "," }
+                TextFieldType = FieldType.Delimited,
+                Delimiters = new string[] { "," }
             };
             //ヘッダー読み込みと記述があるが最初の1行しか読まない挙動コード
             var heads = csv.ReadFields();
@@ -115,7 +118,7 @@ namespace Test_Program1
             //↓ReadFieldsはコメント行を飛ばした1行目を読み込む
             string[] header = csv.ReadFields();
             Console.WriteLine($"{header[1]}");
-            for(int i = 0; i < header.Length; i++)
+            for (int i = 0; i < header.Length; i++)
             {
                 //header.Lengthの分だけカラムを作成
                 dtWeapon.Columns.Add(header[i]);
@@ -123,11 +126,11 @@ namespace Test_Program1
 
 
             //このあとwhileを使ってEndOfDataで最後の行まで読み込む処理を書く
-            while(!csv.EndOfData)
+            while (!csv.EndOfData)
             {
                 //csvの内容を一行ずつDataTableに格納
                 string[] l = csv.ReadFields();
-                dtWeapon.Rows.Add(l) ;
+                dtWeapon.Rows.Add(l);
             }
 
 
@@ -226,6 +229,32 @@ namespace Test_Program1
             }
             Console.WriteLine($"{lWeapon[2]}");
         }
+
+        void Load_Data_Test1()
+        {
+            //指定文字から指定文字まで文字の切り抜き
+            //参考URL(https://hamalabo.net/string-extraction)
+            //参考URL(https://www.fenet.jp/dotnet/column/language/6249/)
+            string str = File.ReadAllText(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE);
+            
+            //最初から指定文字まで削除
+            string str_rm = str.Remove(0, str.IndexOf("PLAYER_WEAPON_LIST_START"));
+            //指定文字を変換
+            str_rm = str_rm.Replace("PLAYER_WEAPON_LIST_START", "");
+            //指定文字から最後まで削除
+            str_rm = str_rm.Remove(str_rm.IndexOf("PLAYER_WEAPON_LIST_END"));
+            Console.WriteLine($"{str_rm}");
+        }
+
+        void Save_Data_Test1()
+        {
+            //所持武器のデータを格納
+            StreamWriter sw = new StreamWriter(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE);
+            sw.Write("PLAYER_WEAPON_LIST_START" + PlayerWeaponList + "PLAYER_WEAPON_LIST_END");
+            
+        }
+
+
 
 
     }
