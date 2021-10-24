@@ -192,6 +192,18 @@ namespace Test_Program1
                             break;
                     }
                 }
+
+                DataRow[] drs = dtWeapon.Select("id='51'");
+                foreach (DataRow d in drs)
+                {
+                    Console.WriteLine(d["name"]);
+                }
+                /*
+                foreach (DataRow dataRow in dtWeapon.Rows)
+                {
+                    Console.WriteLine(string.Join(",", Array.ConvertAll(dataRow.ItemArray, x => x.ToString())));
+                }
+                */
             }
         }
 
@@ -230,28 +242,52 @@ namespace Test_Program1
             Console.WriteLine($"{lWeapon[2]}");
         }
 
+        //疑似ロード
         void Load_Data_Test1()
         {
-            //指定文字から指定文字まで文字の切り抜き
-            //参考URL(https://hamalabo.net/string-extraction)
-            //参考URL(https://www.fenet.jp/dotnet/column/language/6249/)
-            string str = File.ReadAllText(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE);
-            
-            //最初から指定文字まで削除
-            string str_rm = str.Remove(0, str.IndexOf("PLAYER_WEAPON_LIST_START"));
-            //指定文字を変換
-            str_rm = str_rm.Replace("PLAYER_WEAPON_LIST_START", "");
-            //指定文字から最後まで削除
-            str_rm = str_rm.Remove(str_rm.IndexOf("PLAYER_WEAPON_LIST_END"));
-            Console.WriteLine($"{str_rm}");
+            if (!System.IO.File.Exists(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE))
+            {
+                Console.WriteLine($"true");
+                FileInfo fi = new FileInfo(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE);
+                FileStream fs = fi.Create();
+                fs.Close();
+                using (StreamWriter sw = new StreamWriter(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE))
+                {
+                    sw.Write("PLAYER_WEAPON_LIST_START" + PlayerWeaponList + "PLAYER_WEAPON_LIST_END");
+                }
+            }
+            else
+            {
+                //指定文字から指定文字まで文字の切り抜き
+                //参考URL(https://hamalabo.net/string-extraction)
+                //参考URL(https://www.fenet.jp/dotnet/column/language/6249/)
+                string str = File.ReadAllText(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE);
+
+                //最初から指定文字まで削除
+                string str_rm = str.Remove(0, str.IndexOf("PLAYER_WEAPON_LIST_START"));
+                //指定文字を変換
+                str_rm = str_rm.Replace("PLAYER_WEAPON_LIST_START", "");
+                //指定文字から最後まで削除
+                str_rm = str_rm.Remove(str_rm.IndexOf("PLAYER_WEAPON_LIST_END"));
+                Console.WriteLine($"{str_rm}");
+            }
         }
 
+        //疑似セーブ
         void Save_Data_Test1()
         {
-            //所持武器のデータを格納
-            StreamWriter sw = new StreamWriter(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE);
-            sw.Write("PLAYER_WEAPON_LIST_START" + PlayerWeaponList + "PLAYER_WEAPON_LIST_END");
-            
+            if (!System.IO.File.Exists(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE))
+            {
+                Console.WriteLine($"true");
+            }
+            else
+            {
+                using (StreamWriter sw = new StreamWriter(PLAYERDATA_FOLDER_PATH + PLAYERDATA_FILE))
+                {
+                    //所持武器のデータを格納
+                    sw.Write("PLAYER_WEAPON_LIST_START" + PlayerWeaponList + "PLAYER_WEAPON_LIST_END");
+                }
+            }
         }
 
 
